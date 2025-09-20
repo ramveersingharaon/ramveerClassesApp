@@ -1,87 +1,115 @@
-import React from 'react';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import Icon from 'react-native-vector-icons/Ionicons';
+// src/navigation/DrawerNavigator.tsx
 
-// Import navigators and screens
-import BottomTabNavigator, { BottomTabParamList } from './BottomTabNavigator';
+import React from 'react';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { StyleSheet, View, Text } from 'react-native';
+
+// Import all screens and navigators
+import BottomTabNavigator from './BottomTabNavigator';
 import AboutScreen from '../screens/AboutScreen';
 import ContactUsScreen from '../screens/ContactUsScreen';
+// Login and Dashboard screens (if you use them)
+// import LoginPage from '../screens/LoginPage';
+// import DashboardPage from '../screens/DashboardPage';
 
 // Define types for drawer screens and params
 export type DrawerParamList = {
-  MainTabs: { screen: keyof BottomTabParamList } | undefined;
+  Tabs: undefined;
   About: undefined;
   ContactUs: undefined;
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
-const DrawerNavigator = () => {
-  return (
-    <Drawer.Navigator
-      initialRouteName="MainTabs"
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Drawer.Screen
-        name="MainTabs"
-        component={BottomTabNavigator}
-        options={{
-          drawerLabel: 'Home',
-          drawerIcon: ({ color, size }) => (
-            <Icon name="home-outline" size={size} color={color} />
-          ),
-        }}
-        // 'Home' टैब को सक्रिय करता है
-        initialParams={{ screen: 'Home' }}
-      />
-      <Drawer.Screen
-        name="NotesDrawer"
-        component={BottomTabNavigator}
-        options={{
-          drawerLabel: 'Notes',
-          drawerIcon: ({ color, size }) => (
-            <Icon name="document-text-outline" size={size} color={color} />
-          ),
-        }}
-        initialParams={{ screen: 'Notes' }}
-      />
-      <Drawer.Screen
-        name="VideosDrawer"
-        component={BottomTabNavigator}
-        options={{
-          drawerLabel: 'Videos',
-          drawerIcon: ({ color, size }) => (
-            <Icon name="videocam-outline" size={size} color={color} />
-          ),
-        }}
-        initialParams={{ screen: 'Videos' }}
-      />
+// Custom Drawer Content Component
+const CustomDrawerContent = (props: any) => {
+    const { state, navigation } = props;
+    const focusedRoute = state.routes[state.index];
+    const focusedScreen = getFocusedRouteNameFromRoute(focusedRoute) || focusedRoute.name;
 
-      {/* About और Contact Us को यहाँ, सबसे नीचे रखें */}
-      <Drawer.Screen
-        name="About"
-        component={AboutScreen}
-        options={{
-          drawerLabel: 'About Us',
-          drawerIcon: ({ color, size }) => (
-            <Icon name="information-circle-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="ContactUs"
-        component={ContactUsScreen}
-        options={{
-          drawerLabel: 'Contact Us',
-          drawerIcon: ({ color, size }) => (
-            <Icon name="call-outline" size={size} color={color} />
-          ),
-        }}
-      />
-    </Drawer.Navigator>
-  );
+    return (
+        <DrawerContentScrollView {...props}>
+            <View style={styles.drawerHeader}>
+                <Text style={styles.drawerHeaderText}>Ramveer Classes</Text>
+            </View>
+
+            {/* Home, Notes, Videos items */}
+            <DrawerItem
+                label="Home"
+                icon={({ color, size }) => <Icon name="home-outline" color={color} size={size} />}
+                onPress={() => navigation.navigate('Tabs', { screen: 'Home' })}
+                focused={focusedScreen === 'Home'}
+            />
+            <DrawerItem
+                label="Notes"
+                icon={({ color, size }) => <Icon name="document-text-outline" color={color} size={size} />}
+                onPress={() => navigation.navigate('Tabs', { screen: 'Notes' })}
+                focused={focusedScreen === 'Notes'}
+            />
+            <DrawerItem
+                label="Videos"
+                icon={({ color, size }) => <Icon name="videocam-outline" color={color} size={size} />}
+                onPress={() => navigation.navigate('Tabs', { screen: 'Videos' })}
+                focused={focusedScreen === 'Videos'}
+            />
+            
+            {/* About and Contact Us items */}
+            <DrawerItem
+                label="About"
+                icon={({ color, size }) => <Icon name="information-circle-outline" color={color} size={size} />}
+                onPress={() => navigation.navigate('About')}
+                focused={focusedScreen === 'About'}
+            />
+            <DrawerItem
+                label="Contact Us"
+                icon={({ color, size }) => <Icon name="call-outline" color={color} size={size} />}
+                onPress={() => navigation.navigate('ContactUs')}
+                focused={focusedScreen === 'ContactUs'}
+            />
+        </DrawerContentScrollView>
+    );
 };
+
+const DrawerNavigator = () => {
+    return (
+        <Drawer.Navigator
+            initialRouteName="Tabs"
+            drawerContent={(props) => <CustomDrawerContent {...props} />}
+            screenOptions={{
+                headerShown: false,
+            }}
+        >
+            <Drawer.Screen
+                name="Tabs"
+                component={BottomTabNavigator}
+                options={{
+                    headerShown: false, // बॉटम टैब में हेडर पहले से ही हटा दिया गया है
+                }}
+            />
+            <Drawer.Screen
+                name="About"
+                component={AboutScreen}
+            />
+            <Drawer.Screen
+                name="ContactUs"
+                component={ContactUsScreen}
+            />
+        </Drawer.Navigator>
+    );
+};
+
+const styles = StyleSheet.create({
+    drawerHeader: {
+        padding: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+    },
+    drawerHeaderText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+});
 
 export default DrawerNavigator;
