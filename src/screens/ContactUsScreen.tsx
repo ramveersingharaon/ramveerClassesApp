@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const HomeScreen: React.FC = () => {
+const ContactUsScreen: React.FC = () => {
   const navigation = useNavigation();
 
   return (
@@ -16,13 +16,13 @@ const HomeScreen: React.FC = () => {
         >
           <Icon name="menu-outline" size={30} color="#000" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Home</Text>
+        <Text style={styles.headerTitle}>Contact Us</Text>
       </View>
       
       {/* Content */}
       <View style={styles.content}>
-        <Text style={styles.title}>Welcome to the App!</Text>
-        <Text style={styles.subtitle}>Tap the menu icon to open the drawer.</Text>
+        <Text style={styles.title}>Contact Us Screen</Text>
+        <Text style={styles.subtitle}>This is a placeholder for the Contact Us page.</Text>
       </View>
     </View>
   );
@@ -68,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default ContactUsScreen;
